@@ -37,8 +37,8 @@ sh "docker push $IMAGE_NAME:$IMAGE_TAG"
         sh '''
         aws eks update-kubeconfig --region us-east-1 --name trend-eks-cluster
         
-        kubectl apply -f trend-app.yaml
-        kubectl apply -f trend-service.yaml
+        kubectl apply -f trend-app.yml
+        kubectl apply -f trend-service.yml
         '''
     }
 }
