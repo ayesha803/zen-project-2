@@ -2,7 +2,9 @@ pipeline{
     agent any
     environment{
         IMAGE_NAME = 'ayeshadockerhub/trend-app'
-        IMAGE_TAG = '1.0'
+        IMAGE_TAG = ${BUILD_NUMBER}
+        CLUSTER_NAME = 'trend-eks-cluster'
+        AWS_REGION = 'us-east-1'
     }
     stages{
         stage('Docker Build'){
@@ -22,5 +24,24 @@ sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
 }
             }
         }
+
+        stage('Update Kubernetes YAML'){
+    steps{
+        sh '''
+        sed -i "s|image: ayeshadockerhub/trend-app:.*|image: $IMAGE_NAME:$IMAGE_TAG|" trend-app.yaml
+        '''
+    }
+}
+
+        stage('Deploy to EKS'){
+    steps{
+        sh '''
+        aws eks update-kubeconfig --region us-east-1 --name trend-eks-cluster
+        
+        kubectl apply -f trend-app.yaml
+        kubectl apply -f trend-service.yaml
+        '''
+    }
+}
     }
 }
