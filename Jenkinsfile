@@ -32,7 +32,7 @@ sh "docker push $IMAGE_NAME:$IMAGE_TAG"
     }
 }
 
-        stage('Deploy to EKS'){
+        stage('Configure & Deploy to EKS'){
     steps{
         sh '''
         aws eks update-kubeconfig --region us-east-1 --name trend-eks-cluster
